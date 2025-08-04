@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package allnodes.v4;
+
+// The Allnodes service
+service AllnodesService {
+  // GetSnapshotNodes returns a list of nodes with the latest snapshots
+  rpc GetSnapshotNode(SnapshotRequest) returns (SnapshotResponse) {}
+
+  // GetValidatorFlags returns validator flags
+  rpc GetValidatorFlags(ValidatorFlagsRequest) returns (ValidatorFlagsResponse) {}
+}
+
+// The snapshot request
+message SnapshotRequest {
+  // Shred version
+  uint32 shred_version = 1;
+}
+
+// The snapshot response
+message SnapshotResponse {
+  // Best snapshot node, if any
+  SnapshotNode node = 1;
+}
+
+// The snapshot node
+message SnapshotNode {
+  // `SocketAddr` encoded by borsh
+  bytes rpc = 1;
+  // Pubkey of the RPC node in binary representation
+  bytes pubkey = 2;
+  // `SnapshotHash` encoded by borsh
+  bytes snapshot_hash = 3;
+  // Latency of the RPC request
+  uint64 latency = 4;
+}
+
+// The validator flags request
+message ValidatorFlagsRequest {
+  // Shred version
+  uint32 shred_version = 1;
+}
+
+// The validator flags response
+message ValidatorFlagsResponse {
+  // Validator flags
+  uint64 flags = 1;
+}
