@@ -9,7 +9,7 @@ prost = { workspace = true }
 solana-hash = { workspace = true }
 solana-pubkey = { workspace = true }
 thiserror = { workspace = true }
-tonic = { workspace = true }
+tonic = { workspace = true, features = ["tls", "tls-roots"] }
 
 [build-dependencies]
 tonic-build = { workspace = true }
