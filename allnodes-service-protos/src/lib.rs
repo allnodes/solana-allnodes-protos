@@ -3,7 +3,7 @@ mod flags;
 
 #[allow(clippy::default_trait_access)]
 mod protos {
-    tonic::include_proto!("allnodes.v4");
+    tonic::include_proto!("allnodes.v5");
 }
 
 use {
@@ -15,30 +15,29 @@ pub use {
     flags::Flags,
     protos::{
         allnodes_service_client as client, allnodes_service_server as server,
-        SnapshotNode as SnapshotNodePb, SnapshotRequest as SnapshotRequestPb,
-        SnapshotResponse as SnapshotResponsePb, ValidatorFlagsRequest as ValidatorFlagsRequestPb,
-        ValidatorFlagsResponse as ValidatorFlagsResponsePb,
+        SnapshotNode as SnapshotNodePb, BootstrapInfoRequest as BootstrapInfoRequestPb,
+        BootstrapInfoResponse as BootstrapInfoResponsePb
     },
     server::AllnodesServiceServer as Server,
 };
 
 #[derive(Debug, Default)]
-pub struct SnapshotRequest {
+pub struct BootstrapInfoRequest {
     pub shred_version: u16,
 }
 
-impl From<&SnapshotRequest> for SnapshotRequestPb {
-    fn from(from: &SnapshotRequest) -> Self {
+impl From<&BootstrapInfoRequest> for BootstrapInfoRequestPb {
+    fn from(from: &BootstrapInfoRequest) -> Self {
         Self {
             shred_version: from.shred_version.into(),
         }
     }
 }
 
-impl TryFrom<SnapshotRequestPb> for SnapshotRequest {
+impl TryFrom<BootstrapInfoRequestPb> for BootstrapInfoRequest {
     type Error = ConversionError;
 
-    fn try_from(from: SnapshotRequestPb) -> Result<Self, Self::Error> {
+    fn try_from(from: BootstrapInfoRequestPb) -> Result<Self, Self::Error> {
         Ok(Self {
             shred_version: u16::try_from(from.shred_version)?,
         })
@@ -46,17 +45,24 @@ impl TryFrom<SnapshotRequestPb> for SnapshotRequest {
 }
 
 #[derive(Debug)]
-pub struct SnapshotResponse {
+pub struct BootstrapInfoResponse {
+    pub node: Option<BootstrapSnapshotNode>,
+    pub flags: Flags,
+    pub contact_info: Vec<u8>,
+}
+
+#[derive(Debug)]
+pub struct BootstrapSnapshotNode {
     pub rpc: SocketAddr,
     pub pubkey: Pubkey,
     pub snapshot_hash: SnapshotHash,
     pub latency_microseconds: u64,
 }
 
-impl TryFrom<SnapshotResponse> for SnapshotNodePb {
+impl TryFrom<BootstrapSnapshotNode> for SnapshotNodePb {
     type Error = ConversionError;
 
-    fn try_from(from: SnapshotResponse) -> Result<Self, Self::Error> {
+    fn try_from(from: BootstrapSnapshotNode) -> Result<Self, Self::Error> {
         Ok(Self {
             rpc: borsh::to_vec(&from.rpc)?,
             pubkey: from.pubkey.to_bytes().to_vec(),
@@ -66,7 +72,7 @@ impl TryFrom<SnapshotResponse> for SnapshotNodePb {
     }
 }
 
-impl TryFrom<SnapshotNodePb> for SnapshotResponse {
+impl TryFrom<SnapshotNodePb> for BootstrapSnapshotNode {
     type Error = ConversionError;
 
     fn try_from(from: SnapshotNodePb) -> Result<Self, Self::Error> {
@@ -80,21 +86,27 @@ impl TryFrom<SnapshotNodePb> for SnapshotResponse {
     }
 }
 
-impl TryFrom<Option<SnapshotResponse>> for SnapshotResponsePb {
+impl TryFrom<BootstrapInfoResponse> for BootstrapInfoResponsePb {
     type Error = ConversionError;
 
-    fn try_from(from: Option<SnapshotResponse>) -> Result<Self, Self::Error> {
+    fn try_from(from: BootstrapInfoResponse) -> Result<Self, Self::Error> {
         Ok(Self {
-            node: from.map(TryFrom::try_from).transpose()?,
+            node: from.node.map(TryFrom::try_from).transpose()?,
+            flags: from.flags.into(),
+            contact_info: from.contact_info,
         })
     }
 }
 
-impl TryFrom<SnapshotResponsePb> for Option<SnapshotResponse> {
+impl TryFrom<BootstrapInfoResponsePb> for BootstrapInfoResponse {
     type Error = ConversionError;
 
-    fn try_from(from: SnapshotResponsePb) -> Result<Self, Self::Error> {
-        from.node.map(SnapshotResponse::try_from).transpose()
+    fn try_from(from: BootstrapInfoResponsePb) -> Result<Self, Self::Error> {
+        Ok(Self {
+            node: from.node.map(BootstrapSnapshotNode::try_from).transpose()?,
+            flags: from.flags.into(),
+            contact_info: from.contact_info,
+        })
     }
 }
 
@@ -102,39 +114,4 @@ impl TryFrom<SnapshotResponsePb> for Option<SnapshotResponse> {
 pub struct SnapshotHash {
     pub full: (u64, Hash),
     pub incr: (u64, Hash),
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct ValidatorFlagsRequest {
-    pub shred_version: u16,
-}
-
-impl From<ValidatorFlagsRequest> for ValidatorFlagsRequestPb {
-    fn from(from: ValidatorFlagsRequest) -> Self {
-        Self {
-            shred_version: from.shred_version.into(),
-        }
-    }
-}
-
-impl TryFrom<ValidatorFlagsRequestPb> for ValidatorFlagsRequest {
-    type Error = ConversionError;
-
-    fn try_from(from: ValidatorFlagsRequestPb) -> Result<Self, Self::Error> {
-        Ok(Self {
-            shred_version: u16::try_from(from.shred_version)?,
-        })
-    }
-}
-
-impl From<ValidatorFlagsResponsePb> for Flags {
-    fn from(from: ValidatorFlagsResponsePb) -> Self {
-        from.flags.into()
-    }
-}
-
-impl From<Flags> for ValidatorFlagsResponsePb {
-    fn from(from: Flags) -> Self {
-        Self { flags: from.into() }
-    }
 }

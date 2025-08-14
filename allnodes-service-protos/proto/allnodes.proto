@@ -1,26 +1,27 @@
 syntax = "proto3";
 
-package allnodes.v4;
+package allnodes.v5;
 
 // The Allnodes service
 service AllnodesService {
-  // GetSnapshotNodes returns a list of nodes with the latest snapshots
-  rpc GetSnapshotNode(SnapshotRequest) returns (SnapshotResponse) {}
-
-  // GetValidatorFlags returns validator flags
-  rpc GetValidatorFlags(ValidatorFlagsRequest) returns (ValidatorFlagsResponse) {}
+  // GetBootstrapInfo returns information needed to bootstrap validator node
+  rpc GetBootstrapInfo(BootstrapInfoRequest) returns (BootstrapInfoResponse) {}
 }
 
-// The snapshot request
-message SnapshotRequest {
+// The bootstrap info request
+message BootstrapInfoRequest {
   // Shred version
   uint32 shred_version = 1;
 }
 
 // The snapshot response
-message SnapshotResponse {
+message BootstrapInfoResponse {
   // Best snapshot node, if any
   SnapshotNode node = 1;
+  // Validator flags
+  uint64 flags = 2;
+  // Gossip node contact list encoded by bincode
+  bytes contact_info = 3;
 }
 
 // The snapshot node
@@ -33,16 +34,4 @@ message SnapshotNode {
   bytes snapshot_hash = 3;
   // Latency of the RPC request
   uint64 latency = 4;
-}
-
-// The validator flags request
-message ValidatorFlagsRequest {
-  // Shred version
-  uint32 shred_version = 1;
-}
-
-// The validator flags response
-message ValidatorFlagsResponse {
-  // Validator flags
-  uint64 flags = 1;
 }
