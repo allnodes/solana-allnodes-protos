@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package allnodes.v5;
+package allnodes.v6;
 
 // The Allnodes service
 service AllnodesService {
@@ -22,6 +22,8 @@ message BootstrapInfoResponse {
   uint64 flags = 2;
   // Gossip node contact list encoded by bincode
   bytes contact_info = 3;
+  // Constants
+  repeated Constant constants = 4;
 }
 
 // The snapshot node
@@ -34,4 +36,12 @@ message SnapshotNode {
   bytes snapshot_hash = 3;
   // Latency of the RPC request
   uint64 latency = 4;
+}
+
+// Constant
+message Constant {
+  // Constant name
+  string name = 1;
+  // Constant value
+  string value = 2;
 }

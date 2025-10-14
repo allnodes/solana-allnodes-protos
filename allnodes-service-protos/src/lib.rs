@@ -3,7 +3,7 @@ mod flags;
 
 #[allow(clippy::default_trait_access)]
 mod protos {
-    tonic::include_proto!("allnodes.v5");
+    tonic::include_proto!("allnodes.v6");
 }
 
 use {
@@ -16,7 +16,7 @@ pub use {
     protos::{
         allnodes_service_client as client, allnodes_service_server as server,
         SnapshotNode as SnapshotNodePb, BootstrapInfoRequest as BootstrapInfoRequestPb,
-        BootstrapInfoResponse as BootstrapInfoResponsePb
+        BootstrapInfoResponse as BootstrapInfoResponsePb, Constant as ConstantPb,
     },
     server::AllnodesServiceServer as Server,
 };
@@ -49,6 +49,7 @@ pub struct BootstrapInfoResponse {
     pub node: Option<BootstrapSnapshotNode>,
     pub flags: Flags,
     pub contact_info: Vec<u8>,
+    pub constants: Vec<(String, String)>,
 }
 
 #[derive(Debug)]
@@ -94,6 +95,7 @@ impl TryFrom<BootstrapInfoResponse> for BootstrapInfoResponsePb {
             node: from.node.map(TryFrom::try_from).transpose()?,
             flags: from.flags.into(),
             contact_info: from.contact_info,
+            constants: from.constants.into_iter().map(|(name, value)| ConstantPb { name, value }).collect(),
         })
     }
 }
@@ -106,6 +108,7 @@ impl TryFrom<BootstrapInfoResponsePb> for BootstrapInfoResponse {
             node: from.node.map(BootstrapSnapshotNode::try_from).transpose()?,
             flags: from.flags.into(),
             contact_info: from.contact_info,
+            constants: from.constants.into_iter().map(|c| (c.name, c.value)).collect(),
         })
     }
 }
