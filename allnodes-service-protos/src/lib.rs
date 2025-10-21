@@ -3,7 +3,7 @@ mod flags;
 
 #[allow(clippy::default_trait_access)]
 mod protos {
-    tonic::include_proto!("allnodes.v6");
+    tonic::include_proto!("allnodes.v5");
 }
 
 use {

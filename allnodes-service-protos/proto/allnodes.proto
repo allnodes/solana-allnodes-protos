@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package allnodes.v6;
+package allnodes.v5;
 
 // The Allnodes service
 service AllnodesService {
