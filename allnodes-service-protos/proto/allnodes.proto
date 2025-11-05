@@ -2,46 +2,63 @@ syntax = "proto3";
 
 package allnodes.v5;
 
-// The Allnodes service
 service AllnodesService {
-  // GetBootstrapInfo returns information needed to bootstrap validator node
   rpc GetBootstrapInfo(BootstrapInfoRequest) returns (BootstrapInfoResponse) {}
+  rpc ProcessPohCoreConfig(ProcessPohCoreConfigRequest) returns (ProcessPohCoreConfigResponse) {}
+  rpc ResolvePohCpuCore(ResolvePohCpuCoreRequest) returns (ResolvePohCpuCoreResponse) {}
 }
 
-// The bootstrap info request
 message BootstrapInfoRequest {
-  // Shred version
   uint32 shred_version = 1;
+  optional string version = 2;
+  optional fixed64 hardware_id = 3;
 }
 
-// The snapshot response
 message BootstrapInfoResponse {
-  // Best snapshot node, if any
   SnapshotNode node = 1;
-  // Validator flags
   uint64 flags = 2;
-  // Gossip node contact list encoded by bincode
   bytes contact_info = 3;
-  // Constants
   repeated Constant constants = 4;
 }
 
-// The snapshot node
 message SnapshotNode {
-  // `SocketAddr` encoded by borsh
   bytes rpc = 1;
-  // Pubkey of the RPC node in binary representation
   bytes pubkey = 2;
-  // `SnapshotHash` encoded by borsh
   bytes snapshot_hash = 3;
-  // Latency of the RPC request
   uint64 latency = 4;
 }
 
-// Constant
 message Constant {
-  // Constant name
   string name = 1;
-  // Constant value
   string value = 2;
+}
+
+message ProcessPohCoreConfigRequest {
+  string cpu_info = 2;
+}
+
+message ProcessPohCoreConfigResponse {
+  fixed64 cpuid = 1;
+  repeated CoreConfig cores = 2;
+}
+
+message CoreConfig {
+  uint32 processor_id = 1;
+  uint32 core_id = 2;
+  repeated uint32 vcore_ids = 3;
+  optional uint64 score = 4;
+}
+
+message BenchmarkResults {
+  repeated CoreConfig cores = 1;
+}
+
+message ResolvePohCpuCoreRequest {
+  BenchmarkResults benchmark = 1;
+  optional string isolated = 2;
+}
+
+message ResolvePohCpuCoreResponse {
+  uint32 core_id = 1;
+  optional string message = 2;
 }
