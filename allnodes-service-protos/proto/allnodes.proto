@@ -6,6 +6,7 @@ service AllnodesService {
   rpc GetBootstrapInfo(BootstrapInfoRequest) returns (BootstrapInfoResponse) {}
   rpc ProcessPohCoreConfig(ProcessPohCoreConfigRequest) returns (ProcessPohCoreConfigResponse) {}
   rpc ResolvePohCpuCore(ResolvePohCpuCoreRequest) returns (ResolvePohCpuCoreResponse) {}
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse) {}
 }
 
 message BootstrapInfoRequest {
@@ -31,6 +32,7 @@ message SnapshotNode {
 message Constant {
   string name = 1;
   string value = 2;
+  bool is_persistent = 3;
 }
 
 message ProcessPohCoreConfigRequest {
@@ -62,3 +64,7 @@ message ResolvePohCpuCoreResponse {
   uint32 core_id = 1;
   optional string message = 2;
 }
+
+message HeartbeatRequest {}
+
+message HeartbeatResponse {}

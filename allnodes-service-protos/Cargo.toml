@@ -4,11 +4,8 @@ version = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
-bincode = { workspace = true }
 borsh = { workspace = true }
 prost = { workspace = true }
-serde = { workspace = true }
-serde_derive = { workspace = true }
 solana-hash = { workspace = true }
 solana-pubkey = { workspace = true }
 thiserror = { workspace = true }

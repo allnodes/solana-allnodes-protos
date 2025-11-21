@@ -16,48 +16,20 @@ pub use {
     protos::{
         BenchmarkResults, BootstrapInfoRequest as BootstrapInfoRequestPb,
         BootstrapInfoResponse as BootstrapInfoResponsePb, Constant as ConstantPb, CoreConfig,
-        ProcessPohCoreConfigRequest, ProcessPohCoreConfigResponse, ResolvePohCpuCoreRequest,
-        ResolvePohCpuCoreResponse, SnapshotNode as SnapshotNodePb,
-        allnodes_service_client as client, allnodes_service_server as server,
+        HeartbeatRequest, HeartbeatResponse, ProcessPohCoreConfigRequest,
+        ProcessPohCoreConfigResponse, ResolvePohCpuCoreRequest, ResolvePohCpuCoreResponse,
+        SnapshotNode as SnapshotNodePb, allnodes_service_client as client,
+        allnodes_service_server as server,
     },
     server::AllnodesServiceServer as Server,
 };
-
-#[derive(Debug, Default)]
-pub struct BootstrapInfoRequest {
-    pub shred_version: u16,
-    pub version: Option<String>,
-    pub hardware_id: Option<u64>,
-}
-
-impl From<&BootstrapInfoRequest> for BootstrapInfoRequestPb {
-    fn from(from: &BootstrapInfoRequest) -> Self {
-        Self {
-            shred_version: from.shred_version.into(),
-            version: from.version.clone(),
-            hardware_id: from.hardware_id,
-        }
-    }
-}
-
-impl TryFrom<BootstrapInfoRequestPb> for BootstrapInfoRequest {
-    type Error = ConversionError;
-
-    fn try_from(from: BootstrapInfoRequestPb) -> Result<Self, Self::Error> {
-        Ok(Self {
-            shred_version: u16::try_from(from.shred_version)?,
-            version: from.version,
-            hardware_id: from.hardware_id,
-        })
-    }
-}
 
 #[derive(Debug)]
 pub struct BootstrapInfoResponse {
     pub node: Option<BootstrapSnapshotNode>,
     pub flags: Flags,
     pub contact_info: Vec<u8>,
-    pub constants: Vec<(String, String)>,
+    pub constants: Vec<ConstantPb>,
 }
 
 #[derive(Debug)]
@@ -103,11 +75,7 @@ impl TryFrom<BootstrapInfoResponse> for BootstrapInfoResponsePb {
             node: from.node.map(TryFrom::try_from).transpose()?,
             flags: from.flags.into(),
             contact_info: from.contact_info,
-            constants: from
-                .constants
-                .into_iter()
-                .map(|(name, value)| ConstantPb { name, value })
-                .collect(),
+            constants: from.constants,
         })
     }
 }
@@ -120,11 +88,7 @@ impl TryFrom<BootstrapInfoResponsePb> for BootstrapInfoResponse {
             node: from.node.map(BootstrapSnapshotNode::try_from).transpose()?,
             flags: from.flags.into(),
             contact_info: from.contact_info,
-            constants: from
-                .constants
-                .into_iter()
-                .map(|c| (c.name, c.value))
-                .collect(),
+            constants: from.constants,
         })
     }
 }
