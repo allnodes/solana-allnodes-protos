@@ -14,12 +14,12 @@ pub use {
     error::Error,
     flags::Flags,
     protos::{
-        BenchmarkResults, BootstrapInfoRequest as BootstrapInfoRequestPb,
+        allnodes_service_client as client, allnodes_service_server as server, BenchmarkResults,
+        BootstrapInfoRequest as BootstrapInfoRequestPb,
         BootstrapInfoResponse as BootstrapInfoResponsePb, Constant as ConstantPb, CoreConfig,
-        HeartbeatRequest, HeartbeatResponse, ProcessPohCoreConfigRequest,
-        ProcessPohCoreConfigResponse, ResolvePohCpuCoreRequest, ResolvePohCpuCoreResponse,
-        SnapshotNode as SnapshotNodePb, allnodes_service_client as client,
-        allnodes_service_server as server,
+        GetShredVersionRequest, GetShredVersionResponse, HeartbeatRequest, HeartbeatResponse,
+        ProcessPohCoreConfigRequest, ProcessPohCoreConfigResponse, ResolvePohCpuCoreRequest,
+        ResolvePohCpuCoreResponse, SnapshotNode as SnapshotNodePb,
     },
     server::AllnodesServiceServer as Server,
 };

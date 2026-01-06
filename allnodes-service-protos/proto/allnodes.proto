@@ -3,6 +3,7 @@ syntax = "proto3";
 package allnodes.v5;
 
 service AllnodesService {
+  rpc GetShredVersion(GetShredVersionRequest) returns (GetShredVersionResponse) {}
   rpc GetBootstrapInfo(BootstrapInfoRequest) returns (BootstrapInfoResponse) {}
   rpc ProcessPohCoreConfig(ProcessPohCoreConfigRequest) returns (ProcessPohCoreConfigResponse) {}
   rpc ResolvePohCpuCore(ResolvePohCpuCoreRequest) returns (ResolvePohCpuCoreResponse) {}
@@ -11,8 +12,7 @@ service AllnodesService {
 
 message BootstrapInfoRequest {
   uint32 shred_version = 1;
-  optional string version = 2;
-  optional fixed64 hardware_id = 3;
+  optional fixed64 mid = 2;
 }
 
 message BootstrapInfoResponse {
@@ -68,3 +68,9 @@ message ResolvePohCpuCoreResponse {
 message HeartbeatRequest {}
 
 message HeartbeatResponse {}
+
+message GetShredVersionRequest {}
+
+message GetShredVersionResponse {
+  uint32 shred_version = 1;
+}
