@@ -4,6 +4,7 @@ package allnodes.v5;
 
 service AllnodesService {
   rpc GetShredVersion(GetShredVersionRequest) returns (GetShredVersionResponse) {}
+  rpc GetServiceInfo(GetServiceInfoRequest) returns (GetServiceInfoResponse) {}
   rpc GetBootstrapInfo(BootstrapInfoRequest) returns (BootstrapInfoResponse) {}
   rpc ProcessPohCoreConfig(ProcessPohCoreConfigRequest) returns (ProcessPohCoreConfigResponse) {}
   rpc ResolvePohCpuCore(ResolvePohCpuCoreRequest) returns (ResolvePohCpuCoreResponse) {}
@@ -73,4 +74,11 @@ message GetShredVersionRequest {}
 
 message GetShredVersionResponse {
   uint32 shred_version = 1;
+}
+
+message GetServiceInfoRequest {}
+
+message GetServiceInfoResponse {
+  uint32 shred_version = 1;
+  uint64 capabilities = 2;
 }

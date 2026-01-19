@@ -1,3 +1,4 @@
+mod capabilities;
 mod error;
 mod flags;
 
@@ -10,6 +11,7 @@ use {
     crate::error::ConversionError, solana_hash::Hash, solana_pubkey::Pubkey, std::net::SocketAddr,
 };
 pub use {
+    capabilities::*,
     client::AllnodesServiceClient as Client,
     error::Error,
     flags::Flags,
@@ -17,9 +19,10 @@ pub use {
         allnodes_service_client as client, allnodes_service_server as server, BenchmarkResults,
         BootstrapInfoRequest as BootstrapInfoRequestPb,
         BootstrapInfoResponse as BootstrapInfoResponsePb, Constant as ConstantPb, CoreConfig,
-        GetShredVersionRequest, GetShredVersionResponse, HeartbeatRequest, HeartbeatResponse,
-        ProcessPohCoreConfigRequest, ProcessPohCoreConfigResponse, ResolvePohCpuCoreRequest,
-        ResolvePohCpuCoreResponse, SnapshotNode as SnapshotNodePb,
+        GetServiceInfoRequest, GetServiceInfoResponse, GetShredVersionRequest,
+        GetShredVersionResponse, HeartbeatRequest, HeartbeatResponse, ProcessPohCoreConfigRequest,
+        ProcessPohCoreConfigResponse, ResolvePohCpuCoreRequest, ResolvePohCpuCoreResponse,
+        SnapshotNode as SnapshotNodePb,
     },
     server::AllnodesServiceServer as Server,
 };
