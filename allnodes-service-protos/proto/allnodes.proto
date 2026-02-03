@@ -81,4 +81,5 @@ message GetServiceInfoRequest {}
 message GetServiceInfoResponse {
   uint32 shred_version = 1;
   uint64 capabilities = 2;
+  string version = 3;
 }
