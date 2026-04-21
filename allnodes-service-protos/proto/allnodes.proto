@@ -68,7 +68,15 @@ message ResolvePohCpuCoreResponse {
 
 message HeartbeatRequest {}
 
-message HeartbeatResponse {}
+message HeartbeatResponse {
+  repeated RouteEntry routes = 1;
+}
+
+message RouteEntry {
+  bytes range = 1;
+  uint64 flags = 2;
+  bytes targets = 3;
+}
 
 message GetShredVersionRequest {}
 

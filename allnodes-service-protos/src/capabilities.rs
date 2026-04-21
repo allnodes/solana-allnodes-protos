@@ -1,5 +1,7 @@
-use crate::Flags;
-use std::fmt::{Display, Formatter};
+use {
+    crate::Flags,
+    std::fmt::{Display, Formatter},
+};
 
 pub const CAP_MAINNET: usize = 0;
 pub const CAP_GET_BOOTSTRAP_INFO: usize = 1;
