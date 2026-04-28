@@ -66,7 +66,11 @@ message ResolvePohCpuCoreResponse {
   optional string message = 2;
 }
 
-message HeartbeatRequest {}
+message HeartbeatRequest {
+  optional bytes identity = 1;
+  optional uint64 slot = 2;
+  optional bytes signature = 3;
+}
 
 message HeartbeatResponse {
   repeated RouteEntry routes = 1;
