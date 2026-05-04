@@ -7,6 +7,14 @@ mod protos {
     tonic::include_proto!("allnodes.v5");
 }
 
+#[allow(clippy::default_trait_access)]
+pub mod oracle {
+    tonic::include_proto!("allnodes.oracle");
+
+    pub type Client<T> = oracle_client::OracleClient<T>;
+    pub use oracle_server::{Oracle as Server, OracleServer};
+}
+
 use {
     crate::error::ConversionError, solana_hash::Hash, solana_pubkey::Pubkey, std::net::SocketAddr,
 };
@@ -62,8 +70,8 @@ impl TryFrom<SnapshotNodePb> for BootstrapSnapshotNode {
     fn try_from(from: SnapshotNodePb) -> Result<Self, Self::Error> {
         Ok(Self {
             rpc: borsh::from_slice(&from.rpc)?,
-            pubkey: Pubkey::try_from(from.pubkey)
-                .map_err(ConversionError::PubkeyDeserialization)?,
+            pubkey: Pubkey::try_from(from.pubkey.as_slice())
+                .map_err(|_| ConversionError::PubkeyDeserialization(from.pubkey))?,
             snapshot_hash: borsh::from_slice(&from.snapshot_hash)?,
             latency_microseconds: from.latency,
         })

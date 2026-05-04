@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package allnodes.oracle;
+
+service Oracle {
+  rpc GetIdentity(GetIdentityRequest) returns (GetIdentityResponse);
+  rpc Sign(SignRequest) returns (SignResponse);
+  rpc SubscribeRotated(SubscribeRotatedRequest) returns (stream RotatedEvent);
+}
+
+message GetIdentityRequest {}
+message GetIdentityResponse {
+  bytes  pubkey     = 1;
+  uint64 generation = 2;
+}
+
+message SignRequest {
+  bytes  message    = 1;
+  uint64 generation = 2;
+}
+
+message SignResponse {
+  bytes  signature  = 1;
+  uint64 generation = 2;
+}
+
+message SubscribeRotatedRequest {}
+message RotatedEvent {
+  bytes  new_pubkey = 1;
+  uint64 generation = 2;
+}
