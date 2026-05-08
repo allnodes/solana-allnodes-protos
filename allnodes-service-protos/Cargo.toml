@@ -9,7 +9,8 @@ prost = { workspace = true }
 solana-hash = { workspace = true }
 solana-pubkey = { workspace = true }
 thiserror = { workspace = true }
-tonic = { workspace = true, features = ["tls", "tls-roots"] }
+tonic = { workspace = true, features = ["tls-native-roots", "tls-ring"] }
+tonic-prost = { workspace = true }
 
 [build-dependencies]
-tonic-build = { workspace = true }
+tonic-prost-build = { workspace = true }
